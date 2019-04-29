@@ -1,0 +1,37 @@
+#
+# Set up an s3 object store for OpenStack to use
+#
+
+apiVersion: ceph.rook.io/v1
+kind: CephObjectStore
+metadata:
+  name: openstack-s3
+  namespace: rook-ceph
+spec:
+  metadataPool:
+    failureDomain: host
+    replicated:
+      size: 3
+  dataPool:
+    failureDomain: host
+    replicated:
+      size: 3
+  gateway:
+    type: s3
+    port: 80
+    instances: 1
+
+---
+
+#
+# set up a user for OpenStack Swift
+#
+
+apiVersion: ceph.rook.io/v1
+kind: CephObjectStoreUser
+metadata:
+  name: swift
+  namespace: rook-ceph
+spec:
+  store: openstack-s3
+  displayName: swift

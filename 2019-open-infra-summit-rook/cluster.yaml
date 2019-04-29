@@ -1,0 +1,62 @@
+#
+# Definition/configuration for our Ceph cluster
+#
+
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: rook-ceph
+  namespace: rook-ceph
+spec:
+  cephVersion:
+    image: ceph/ceph:v13.2.5-20190319
+  dataDirHostPath: /var/lib/rook
+  mon:
+    count: 3
+  dashboard:
+    enabled: true
+  network:
+    hostNetwork: true
+  storage:
+    useAllNodes: true
+    useAllDevices: true
+
+---
+
+#
+# Set up block storage pools for OpenStack to use
+#
+
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPool
+metadata:
+  name: images
+  namespace: rook-ceph
+spec:
+  replicated:
+    size: 3
+  failureDomain: host
+
+---
+
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPool
+metadata:
+  name: volumes
+  namespace: rook-ceph
+spec:
+  replicated:
+    size: 3
+  failureDomain: host
+
+---
+
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPool
+metadata:
+  name: vms
+  namespace: rook-ceph
+spec:
+  replicated:
+    size: 3
+  failureDomain: host
